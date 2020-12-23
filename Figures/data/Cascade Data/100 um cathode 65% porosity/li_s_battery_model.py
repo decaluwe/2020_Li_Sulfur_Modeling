@@ -29,7 +29,9 @@ from li_s_battery_init import sol_init
 from li_s_battery_post import label_columns
 from li_s_battery_post import tag_strings
 from li_s_battery_post import plot_sim
-from li_s_battery_post import plot_meanPS
+from li_s_battery_post import plot_meanPS  
+
+from li_s_battery_init import elyte_obj as elyte
 
 def main():
     
@@ -46,9 +48,10 @@ def main():
     atol = np.ones_like(SV_0)*1e-6
     atol[cat.ptr_vec['eps_S8']] = 1e-15
     atol[cat.ptr_vec['eps_Li2S']] = 1e-10
-    atol[cat.ptr_vec['rho_k_el']] = 1e-21 # 1e-16 for Bessler
-    rtol = 1e-6; sim_output = 50
-    
+    atol[cat.ptr_vec['rho_k_el']] = 1e-24 # 1e-16 for Bessler
+    atol[cat.ptr_vec['rho_k_el']][3::elyte.n_species] = 26
+    rtol = 1e-4; sim_output = 50
+     
     rtol_ch = 1e-6
     atol_ch = np.ones_like(SV_0)*1e-6
     

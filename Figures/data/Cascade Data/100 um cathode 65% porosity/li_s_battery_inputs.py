@@ -49,7 +49,7 @@ class inputs():
     # The C-rate is the rate of charge/discharge - how many charges/discharges
     #   can be carried out in 1 hour theoretically? This sets current density
     #   amplitude for impedence tests and external current for CC cycling
-    C_rate = 1.5
+    C_rate = 0.1
 #    C_rate = 1
     
     # Set the test type to run the model for. The following types are supported
@@ -113,7 +113,7 @@ class inputs():
     #   or 'bulk' in the string >sulfur_method below.
     sulfur_method = 'loading'
     A_cat = 1.327e-4            # Cathode planar area [m^2]
-    m_S_0 = 1.9e-2              # Initial total mass of sulfur in cathode [kg_S8] 2.5e-2
+    m_S_0 = 1.9e-2 #1.9e-2      # Initial total mass of sulfur in cathode [kg_S8] 2.5e-2
                                 # if 'bulk' method chosen. Sulfur loading in
                                 # [kg_S8/m^2] if 'loading' method chosen.
                                 
@@ -138,7 +138,8 @@ class inputs():
     #   sulfur means 60 wt% carbon.
     pct_w_S8_0 = 0.6  # Initial weight percent of sulfur in cathode [kg_S8/kg]
     pct_w_C_0 = 1 - pct_w_S8_0   # Initial weight percent of carbon in cathode [kg_C/kg]
-    C_counter_n = 1.024 - 1.821e-4*2 - 3.314e-4*2 - 2.046e-5*2 - 5.348e-10*2 - 8.456e-10*2
+    C_counter_n = (1.024 - 1.821e-4*2 - 3.314e-4*2 - 2.046e-5*2 - 
+                    5.348e-10*2 - 8.456e-10*2)
     if 'Kuzmina' in ctifile:
         C_k_el_0 = np.array([1.023e1, 
                              1.024, 
@@ -168,20 +169,29 @@ class inputs():
         mech = 'Assary'
         print('Using Assary')
     elif 'cascade' in ctifile:
+        C_counter_n = (1.024 - 1.821e-4*2 - 3.314e-6*2 - 
+                        2.046e-6*2 - 2.046e-6*2 - 5.348e-6*2)
+        if 'lithiated' in ctifile:
+            C_counter_0 = 1.024
+        else:
+            C_counter_0 = C_counter_n
+            
         C_k_el_0 = np.array([1.023e1, 
                              1.024, 
-                             C_counter_n, 
+                             C_counter_0, 
                              1.943e-2, 
                              1.821e-4, 
                              3.314e-6, 
                              2.046e-6,
                              2.046e-6,
                              5.348e-6])
-        z_k_el = np.array([0., 1., -1., 0., -2., -2., -2., -2., -2.])
+        
         if 'lithiated' in ctifile:
             mech = 'Cascade_li'
+            z_k_el = np.array([0., 1., -1., 0., 0., 0., 0., 0., 0.])
         else:
             mech = 'Cascade'
+            z_k_el = np.array([0., 1., -1., 0., -2., -2., -2., -2., -2.])
         print('Using cascade')
     elif 'Dennis' or 'Shriram' in ctifile:
         C_counter_n = 1.024 - 1.821e-4*2 - 3.314e-4*2 - 2.046e-5*2 - 5.348e-10*2 - 8.456e-10*2

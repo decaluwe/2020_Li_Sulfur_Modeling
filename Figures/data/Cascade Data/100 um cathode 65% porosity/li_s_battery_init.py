@@ -131,6 +131,7 @@ class cathode():
     eps_S_0 = m_S/rho_S/H
 #    eps_C_0 = 0.062 
     eps_C_0 = 0.255 #m_solid*omega_C/rho_C/H
+    print('Eps_C_0 =', eps_C_0)
 #    eps_L_0 = 1e-4; 
     eps_L_0 = 1e-5
     
@@ -153,7 +154,8 @@ class cathode():
     
     eps_el_0 = 1 - eps_S_0 - eps_C_0 - eps_L_0
     eps_pore = 1 - eps_C_0
-    print('Elyte/sulfur ratio ', eps_el_0/eps_S_0/1.8)
+    
+    
     print('Porosity =', eps_el_0)
     
     m_el = H*eps_el_0*elyte_obj.density_mass
@@ -183,12 +185,19 @@ class cathode():
           + Li2S_obj.density_mole*eps_L_0*H
               
 #    W_S_k = elyte_obj.molecular_weights*S_atoms_bool # Old method
+    W_S = sulfur_obj.molecular_weights/sulfur_obj.n_atoms(sulfur_obj.species_names[0], 'S')
     cap_weights = np.array([1, 7/8, 0.8333, 0.75, 0.5, 0])
     W_S_k = elyte_obj.molecular_weights[3:]
-    m_S_el = inputs.A_cat*eps_el_0*H*np.dot(W_S_k, inputs.C_k_el_0[3:])
-    m_S_el_an = inputs.A_cat*(1 - inputs.epsilon_an)*inputs.H_an*np.dot(W_S_k, inputs.C_k_el_0[3:])
-    m_S_el_sep = inputs.A_cat*(1 - inputs.epsilon_sep)*inputs.H_elyte*np.dot(W_S_k, inputs.C_k_el_0[3:])
+    
+    m_S_el = inputs.A_cat*eps_el_0*H*W_S*np.dot(n_S_atoms, inputs.C_k_el_0)
+    m_S_el_an = inputs.A_cat*(1 - inputs.epsilon_an)*inputs.H_an*W_S*np.dot(n_S_atoms, inputs.C_k_el_0)
+    m_S_el_sep = inputs.A_cat*(1 - inputs.epsilon_sep)*inputs.H_elyte*W_S*np.dot(n_S_atoms, inputs.C_k_el_0)
     m_S_tot_0 = m_S_0 + m_S_el + m_S_el_an + m_S_el_sep 
+    
+    V_elyte = inputs.A_cat*(inputs.H_an*(1-inputs.epsilon_an) +
+                            inputs.H_elyte*(1-inputs.epsilon_sep) +
+                            inputs.H_cat*eps_el_0)
+    print('Elyte/sulfur ratio ', 1e3*V_elyte/m_S_tot_0)
     
     x = np.copy(n_S_atoms)
     x[5:] = (x[5:] - 1)
