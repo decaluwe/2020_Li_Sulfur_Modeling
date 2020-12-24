@@ -1,0 +1,310 @@
+descriptions: |-
+  Sulfur Cathode for Li-ion battery simulations
+    S. DeCaluwe, Colorado School of Mines
+    01-29-2015
+    Adopted from Hofmann, Fronczek, and Bessler,
+    J. Power Sources, 2014.
+
+    Modified by D. Korff, Colorado School of Mines
+    06-12-2019
+
+
+
+phases:
+- name: sulfur
+  thermo: fixed-stoichiometry
+  species: [S8(s)]
+  density: 2.07e3 kg/m^3
+  state:
+    T: 300.0
+    P: 1 atm
+
+- name: lithium
+  thermo: fixed-stoichiometry
+  species: [Li(s)]
+  density: 0.534 g/cm^3
+  state:
+    T: 300.0
+    P: 1 atm
+
+- name: lithium_sulfide
+  thermo: fixed-stoichiometry
+  species: [Li2S(s)]
+  density: 1640 kg/m^3
+  state:
+    T: 300.0
+    P: 1 atm
+
+- name: carbon
+  thermo: fixed-stoichiometry
+  species: [C6]
+  density: 2.26e3 kg/m^3
+  state:
+    T: 300.0
+    P: 1 atm
+
+- name: electron
+  thermo: electron-cloud
+  elements: [E]
+  species: [electron]
+  state:
+    T: 300.0
+    P: 1 atm
+    X: {electron: 1.0}
+  density: 2260 kg/m^3
+
+- name: sulfur_surf
+  thermo: ideal-surface
+  species: [(surf)]
+  kinetics: surface
+  reactions: [sulfur-elyte-reactions]
+  state:
+    T: 300.0
+    P: 1 atm
+
+- name: carbon_surf
+  thermo: ideal-surface
+  species: [(surf)]
+  kinetics: surface
+  reactions: [carbon-elyte-reactions]
+  state:
+    T: 300.0
+    P: 1 atm
+  site-density: 3.48e-2
+
+- name: lithium_sulfide_surf
+  thermo: ideal-surface
+  species: [(surf)]
+  kinetics: surface
+  reactions: [lithium-sulfide-elyte-reactions]
+  state:
+    T: 300.0
+    P: 1 atm
+  site-density: 3.48e-2
+
+- name: lithium_surf
+  thermo: ideal-surface
+  species: [(surf)]
+  kinetics: surface
+  reactions: [anode-elyte-reactions]
+  state:
+    T: 300.0
+    P: 1 atm
+  site-density: 3.48e-2
+
+- name: tpb
+  thermo: edge
+  species: [(edge)]
+  kinetics: edge
+  reactions: none
+  state:
+    T: 300.0
+    P: 1 atm
+  site-density: 3.48e-2
+
+- name: electrolyte
+  thermo: ideal-condensed
+  elements: [Li, C, F, N, H, O, E, S]
+  species: [TEGDME(e), Li+(e), TFSI-(e), S8(e), S8-(e), S6-(e), S4-(e),
+            S2-(e), S-(e)]
+  state:
+    T: 300.0
+    P: 1 atm
+    X: {TEGDME(e): 0.66, Li+(e): 0.17, TFSI-(e): 0.17, S8(e): 0.0, S8-(e): 0.0,
+      S6-(e): 0.0, S4-(e): 0.0, S2-(e): 0.0, S-(e): 0.0}
+  standard-concentration-basis: unity
+
+
+species:
+- name: Li(s)
+  composition: {Li: 1}
+  thermo:
+    model: constant-cp
+    h0: 0.0 kJ/mol
+    s0: 29.1 J/mol/K
+  equation-of-state:
+    model: constant-volume
+    molar-volume: 12.998 cm^3/mol
+
+- name: electron
+  composition: {E: 1}
+  thermo:
+    model: constant-cp
+    h0: 0.0 kJ/mol
+    s0: 0.0 J/mol/K
+
+- name: C6
+  composition: {C: 6}
+  thermo:
+    model: constant-cp
+    h0: 0.0 kJ/mol
+    s0: 0.0 J/mol/K
+  equation-of-state:
+    model: constant-volume
+    molar-volume: 31.747 cm^3/mol
+
+- name: Li+(e)
+  composition: {Li: 1, E: -1}
+  thermo:
+    model: constant-cp
+    h0: -50 kJ/mol
+    s0: 13.4 J/mol/K
+  equation-of-state:
+    model: constant-volume
+    molar-volume: 5.51 cm^3/mol
+
+- name: TFSI-(e)
+  composition: {C: 2, F: 6, S: 2, O: 4, N: 1, E: 1}
+  thermo:
+    model: constant-cp
+    h0: 0.0 kJ/mol
+    s0: 0.0 J/mol/K
+  equation-of-state:
+    model: constant-volume
+    molar-volume: 147.4 cm^3/mol
+
+- name: TEGDME(e)
+  composition: {C: 10, H: 22, O: 5}
+  thermo:
+    model: constant-cp
+    h0: 0.0 kJ/mol
+    s0: 0.0 J/mol/K
+  equation-of-state:
+    model: constant-volume
+    molar-volume: 220.1 cm^3/mol
+
+- name: S8(s)
+  composition: {S: 8}
+  thermo:
+    model: constant-cp
+    h0: 0.0 kJ/mol
+    s0: 0.0 J/mol/K
+  equation-of-state:
+    model: constant-volume
+    molar-volume: 123.9 cm^3/mol
+
+- name: S8(e)
+  composition: {S: 8}
+  thermo:
+    model: constant-cp
+    h0: 17.6 kJ/mol
+    s0: 0.0 J/mol/K
+  equation-of-state:
+    model: constant-volume
+    molar-volume: 123.9 cm^3/mol
+
+- name: S8-(e)
+  composition: {S: 8, E: 2}
+  thermo:
+    model: constant-cp
+    h0: -342 kJ/mol
+    s0: 0.0 J/mol/K
+  equation-of-state:
+    model: constant-volume
+    molar-volume: 1.239e-4 m^3/mol
+
+- name: S6-(e)
+  composition: {S: 6, E: 2}
+  thermo:
+    model: constant-cp
+    h0: -339.5 kJ/mol
+    s0: 0.0 J/mol/K
+  equation-of-state:
+    model: constant-volume
+    molar-volume: 9.294e-5 m^3/mol
+
+- name: S4-(e)
+  composition: {S: 4, E: 2}
+  thermo:
+    model: constant-cp
+    h0: -331.5 kJ/mol
+    s0: 0.0 J/mol/K
+  equation-of-state:
+    model: constant-volume
+    molar-volume: 6.1958e-5 m^3/mol
+
+- name: S2-(e)
+  composition: {S: 2, E: 2}
+  thermo:
+    model: constant-cp
+    h0: -314 kJ/mol
+    s0: 0.0 J/mol/K
+  equation-of-state:
+    model: constant-volume
+    molar-volume: 3.096e-5 m^3/mol
+
+- name: S-(e)
+  composition: {S: 1, E: 2}
+  thermo:
+    model: constant-cp
+    h0: -294.5 kJ/mol
+    s0: 0.0 J/mol/K
+  equation-of-state:
+    model: constant-volume
+    molar-volume: 1.548e-5 m^3/mol
+
+- name: Li2S(s)
+  composition: {Li: 2, S: 1}
+  thermo:
+    model: constant-cp
+    h0: -419 kJ/mol
+    s0: 0.0 J/mol/K
+  equation-of-state:
+    model: constant-volume
+    molar-volume: 27.5 cm^3/mol
+
+- name: (surf)
+  composition: {}
+  thermo:
+    model: constant-cp
+    h0: 0.0 kJ/mol
+    s0: 0.0 J/mol/K
+
+- name: (edge)
+  composition: {}
+  thermo:
+    model: constant-cp
+    h0: 0.0 kJ/mol
+    s0: 0.0 J/mol/K
+
+anode-elyte-reactions:
+- equation: Li(s) <=> Li+(e) + electron
+  id: anode_faradaic_reaction
+  rate-constant: {A: 6e-3, b: 0.0, Ea: 0.0}
+  beta: 0.5
+
+sulfur-elyte-reactions:
+- equation: S8(s) <=> S8(e)
+  id: sulfur_dissolution
+  rate-constant: {A: 1.0e-5, b: 0.0, Ea: 0.0}
+
+carbon-elyte-reactions:
+- equation: 0.5 S8(e) + electron <=> 0.5 S8-(e)
+  id: sulfur_reduction_1
+  rate-constant: {A: 1e8, b: 0.0, Ea: 0.0}
+  beta: 0.5
+
+- equation: 1.5 S8-(e) + electron <=> 2 S6-(e)
+  id: sulfur_reduction_2
+  rate-constant: {A: 5e10, b: 0.0, Ea: 0.0}
+  beta: 0.5
+
+- equation: S6-(e) + electron <=> 1.5 S4-(e)
+  id: sulfur_reduction_3
+  rate-constant: {A: 6e8, b: 0.0, Ea: 0.0}
+  beta: 0.5
+
+- equation: 0.5 S4-(e) + electron <=> S2-(e)
+  id: sulfur_reduction_4
+  rate-constant: {A: 1e5, b: 0.0, Ea: 0.0}
+  beta: 0.5
+
+- equation: 0.5 S2-(e) + electron <=> S-(e)
+  id: sulfur_reduction_5
+  rate-constant: {A: 1e5, b: 0.0, Ea: 0.0}
+  beta: 0.5
+
+lithium-sulfide-elyte-reactions:
+- equation: 2 Li+(e) + S-(e) <=> Li2S(s)
+  id: lithium_sulfide_1
+  rate-constant: {A: 5.75e5, b: 0.0, Ea: 0.0}

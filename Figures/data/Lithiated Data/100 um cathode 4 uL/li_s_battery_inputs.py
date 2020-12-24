@@ -64,7 +64,7 @@ class inputs():
     
     "Set up Cantera phase names and CTI file info"
 #    ctifile = 'sulfur_cathode_cascade_Crate.cti'
-    ctifile = 'sulfur_cathode_cascade_lithiated.cti'
+    ctifile = 'sulfur_cathode_cascade.yml'#_lithiated.cti'
 #    ctifile = 'Kuzmina.yml'
 #    ctifile = 'Kuzmina3.yml'
 #    ctifile = 'Assary.yml'
