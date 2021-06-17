@@ -132,7 +132,7 @@ class cathode():
 #    eps_S_0 = 0.16  
     eps_S_0 = m_S/rho_S/H
 #    eps_C_0 = 0.062 
-    eps_C_0 = 0.056  #m_solid*omega_C/rho_C/H
+    eps_C_0 = 5*0.056  #m_solid*omega_C/rho_C/H
     print('Eps_C_0 =', eps_C_0)
 #    eps_L_0 = 1e-4; 
     eps_L_0 = 1e-5
