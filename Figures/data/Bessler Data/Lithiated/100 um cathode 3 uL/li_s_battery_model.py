@@ -46,7 +46,7 @@ def main():
     t_f = 3600./inputs.C_rate  #63006.69900049 93633
     algvar = sol_init.algvar
     atol = np.ones_like(SV_0)*1e-3
-    atol[cat.ptr_vec['eps_S8']] = 1e-18
+    atol[cat.ptr_vec['eps_S8']] = 1e-22
     atol[cat.ptr_vec['eps_Li2S']] = 1e-15
     atol[cat.ptr_vec['rho_k_el']] = 1e-26 # 1e-19 for Bessler
 #    atol[cat.ptr_vec['rho_k_el']][3::elyte.n_species] = 26
@@ -132,7 +132,7 @@ def main():
         sim_dch = IDA(bat_dch)
         sim_dch.atol = atol
         sim_dch.rtol = rtol
-        sim_dch.maxh = 20
+        sim_dch.maxh = 2
         sim_dch.inith = 1e-5  #1e-5 for bessler
         sim_dch.verbosity = sim_output
         sim_dch.make_consistent('IDA_YA_YDP_INIT')
@@ -331,8 +331,7 @@ class cc_cycling(Implicit_Problem):
             elyte.electric_potential = s1['phi_el'] 
             conductor.electric_potential = s1['phi_ed']
             elyte.X = s1['X_k']
-            b = 0*1e-12  #np.array([1e-13, 1e-11, 4e-11, 1e-12, 6e-12, 6e-12, 1e-11,
-#                        1e-11, 1e-11])
+            b = 1e-14  
             D_scale = b*abs(inputs.C_k_el_0[cat.ptr['iFar']] - s1['C_k'][cat.ptr['iFar']])
             D_el = (cat.D_el - D_scale)*eps_el**(cat.bruggeman)
 
@@ -625,8 +624,8 @@ class cc_cycling(Implicit_Problem):
         """CC BOUNDARY"""
 
 #        print(res, i_ext, t, '\n\n')
-#        if i_ext < 0:
-#            print(t, '\n\n')
+        if i_ext < 0:
+            print(t, '\n\n')
         return res  
     
     "========================================================================="
