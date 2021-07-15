@@ -242,6 +242,15 @@ class cathode():
     A_C_vec = np.array([])
     nucl_thresh = 1e-2
     
+    if 'lithiated' in inputs.ctifile:
+        print('Using lithiated mechanism')
+        lithiated_flag = 1
+        C_Li_0 = inputs.C_k_el_0[ptr['iFar']] + 2*np.sum(inputs.C_k_el_0[4:])
+    else:
+        lithiated_flag = 0
+        C_Li_0 = inputs.C_k_el_0[ptr['iFar']]
+        
+    
 "============================================================================="        
         
 class sep():
