@@ -46,7 +46,7 @@ def main():
     t_f = 3600./inputs.C_rate  #63006.69900049 93633
     algvar = sol_init.algvar
     atol = np.ones_like(SV_0)*1e-3
-    atol[cat.ptr_vec['eps_S8']] = 1e-22
+    atol[cat.ptr_vec['eps_S8']] = 1e-18
     atol[cat.ptr_vec['eps_Li2S']] = 1e-15
     atol[cat.ptr_vec['rho_k_el']] = 1e-26 # 1e-19 for Bessler
 #    atol[cat.ptr_vec['rho_k_el']][3::elyte.n_species] = 26
@@ -132,7 +132,7 @@ def main():
         sim_dch = IDA(bat_dch)
         sim_dch.atol = atol
         sim_dch.rtol = rtol
-        sim_dch.maxh = 5
+        sim_dch.maxh = 2
         sim_dch.inith = 1e-5  #1e-5 for bessler
         sim_dch.verbosity = sim_output
         sim_dch.make_consistent('IDA_YA_YDP_INIT')
@@ -286,6 +286,7 @@ from li_s_battery_init import elyte_obj as elyte
 from li_s_battery_functions import set_state, set_geom, set_rxn
 from li_s_battery_functions import set_state_sep, set_state_anode
 from li_s_battery_functions import dst
+from li_s_battery_functions import scale_Diff
 from math import pi, exp, tanh
 
 class cc_cycling(Implicit_Problem):    
@@ -331,10 +332,12 @@ class cc_cycling(Implicit_Problem):
             elyte.electric_potential = s1['phi_el'] 
             conductor.electric_potential = s1['phi_ed']
             elyte.X = s1['X_k']
-            b = 1e-14  
-            D_scale = b*abs(inputs.C_k_el_0[cat.ptr['iFar']] - s1['C_k'][cat.ptr['iFar']])
+#            b = 1e-14  
+#            D_scale = b*abs(inputs.C_k_el_0[cat.ptr['iFar']] - s1['C_k'][cat.ptr['iFar']])
+            D_scale = scale_Diff(s1['C_k'])
             D_el = (cat.D_el - D_scale)*eps_el**(cat.bruggeman)
-
+#            if i_ext < 0:
+#                print(D_scale, cat.D_el, '\n')
             # Current node plus face boundary fluxes
             i_el_p = cat.sigma_eff*(s1['phi_ed'] - s2['phi_ed'])*cat.dyInv
             N_io_p, i_io_p = dst(s1, s2, D_el, cat.dy, cat.dy)
@@ -445,10 +448,11 @@ class cc_cycling(Implicit_Problem):
         
         # Set outlet boundary conditions for THIS node
         i_el_p = 0
-        D_scale = b*abs(inputs.C_k_el_0[cat.ptr['iFar']] - s1['C_k'][cat.ptr['iFar']])
+        D_scale = scale_Diff(s1['C_k'])  #b*abs(inputs.C_k_el_0[cat.ptr['iFar']] - s1['C_k'][cat.ptr['iFar']])
         D_el = (cat.D_el - D_scale)*eps_el**(cat.bruggeman)
-#        if i_ext < 0 and t > 77087:
-#            print('cat =', D_el, t, '\n')
+#        if i_ext < 0:
+#            print(D_scale, cat.D_el, D_el, t, '\n')
+
         N_io_p, i_io_p = dst(s1, s2, D_el, cat.dy, sep.dy)
 
         sdot_C = C_el_s.get_net_production_rates(elyte)
@@ -540,10 +544,10 @@ class cc_cycling(Implicit_Problem):
             
             # Shift back to THIS node
             offset = sep.offsets[int(j-1)]
-            D_scale = b*abs(inputs.C_k_el_0[cat.ptr['iFar']] - s1['C_k'][cat.ptr['iFar']])
+            D_scale = scale_Diff(s1['C_k'])  #b*abs(inputs.C_k_el_0[cat.ptr['iFar']] - s1['C_k'][cat.ptr['iFar']])
             D_el = sep.D_el - D_scale
-#            if i_ext < 0 and t > 77087:
-#                print('sep =', D_el, t, '\n')
+#            if i_ext < 0:
+#                print(D_scale, cat.D_el, D_el, t, '\n')
             
             # THIS node plus face boundary conditions
             N_io_p, i_io_p = dst(s1, s2, D_el, sep.dy, sep.dy)
@@ -565,8 +569,10 @@ class cc_cycling(Implicit_Problem):
                 
         # Shift back to THIS node
         offset = sep.offsets[-1]
-        D_scale = b*abs(inputs.C_k_el_0[cat.ptr['iFar']] - s1['C_k'][cat.ptr['iFar']])
+        D_scale = scale_Diff(s1['C_k'])  #b*abs(inputs.C_k_el_0[cat.ptr['iFar']] - s1['C_k'][cat.ptr['iFar']])
         D_el = sep.D_el - D_scale
+#        if i_ext < 0:
+#            print(D_scale, cat.D_el, D_el, t, '\n\n')
         
         # Current node plus face boundary conditions
         N_io_p, i_io_p = dst(s1, s2, D_el, sep.dy, an.dy_el)

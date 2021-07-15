@@ -49,7 +49,7 @@ class inputs():
     # The C-rate is the rate of charge/discharge - how many charges/discharges
     #   can be carried out in 1 hour theoretically? This sets current density
     #   amplitude for impedence tests and external current for CC cycling
-    C_rate = 2.0
+    C_rate = 1.0
 #    C_rate = 1
     
     # Set the test type to run the model for. The following types are supported
@@ -116,10 +116,11 @@ class inputs():
     #   or 'bulk' in the string >sulfur_method below.
     sulfur_method = 'loading'
     A_cat = 1.327e-4            # Cathode planar area [m^2]
-    m_S_0 = 1.957e-2 #1.9e-2      # Initial total mass of sulfur in cathode [kg_S8] 2.5e-2
-                                # if 'bulk' method chosen. Sulfur loading in
-                                # [kg_S8/m^2] if 'loading' method chosen.
-                                
+    m_S_0 = 1.957e-2 #1.9e-2     # Initial total mass of sulfur in cathode [kg_S8] 2.5e-2
+                    #1.957e-2   # if 'bulk' method chosen. Sulfur loading in
+                    #2.53e-2    # [kg_S8/m^2] if 'loading' method chosen.
+                    #3.57e-2 
+                    
     # Initial number of nucleation sites per volume for solid phases. Eventually will
     #   use a nucleation theory.
     if 'cascade' or 'Bessler' in ctifile:
